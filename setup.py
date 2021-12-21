@@ -4,9 +4,9 @@ from setuptools import find_packages
 with open('README.rst') as f:
     LONG_DESCRIPTION = f.read()
 MAJOR_VERSION = '0'
-MINOR_VERSION = '15'
+MINOR_VERSION = '16'
 MICRO_VERSION = '0'
-VERSION = "{}.{}.{}".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
+VERSION = "{}.{}.{}-pp".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
 
 setup(
     name='yagmail',
