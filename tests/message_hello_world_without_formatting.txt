@@ -1,0 +1,14 @@
+Content-Type: multipart/alternative; boundary="================="
+MIME-Version: 1.0
+Subject: fake-subject
+From: "John Doe" <username@domain.com>
+To: dest@other.domain.com
+Message-ID: <8aae90ca5c21941924527f916c805189@pp>
+
+--=================
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+Hello World
+--=================--

@@ -112,6 +112,7 @@ class SMTP:
         prettify_html=True,
         message_id=None,
         group_messages=True,
+        text_only_without_formatting=False,
     ):
         addresses = resolve_addresses(self.user, self.useralias, to, cc, bcc)
 
@@ -132,6 +133,7 @@ class SMTP:
             message_id,
             group_messages,
             self.dkim,
+            text_only_without_formatting,
         )
 
         recipients = addresses["recipients"]
@@ -151,6 +153,7 @@ class SMTP:
         prettify_html=True,
         message_id=None,
         group_messages=True,
+        text_only_without_formatting=False,
     ):
         """ Use this to send an email with gmail"""
         self.login()
@@ -165,6 +168,7 @@ class SMTP:
             prettify_html,
             message_id,
             group_messages,
+            text_only_without_formatting,
         )
         if preview_only:
             return recipients, msg_bytes
