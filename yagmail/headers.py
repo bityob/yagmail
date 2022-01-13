@@ -1,6 +1,8 @@
 import time
 import random
 import hashlib
+from email.utils import parseaddr
+
 from yagmail.compat import text_type
 from yagmail.error import YagAddressError
 
@@ -22,14 +24,19 @@ def resolve_addresses(user, useralias, to, cc, bcc):
 
 
 def make_addr_alias_user(email_addr):
-    if isinstance(email_addr, text_type):
-        if "@" not in email_addr:
-            email_addr += "@gmail.com"
-        return (email_addr, email_addr)
-    if isinstance(email_addr, dict):
-        if len(email_addr) == 1:
-            return (list(email_addr.keys())[0], list(email_addr.values())[0])
-    raise YagAddressError
+    if not isinstance(email_addr, text_type):
+        raise YagAddressError
+
+    name, email = parseaddr(email_addr)
+
+    # Minimal email verification
+    if not email or "@" not in email_addr:
+        raise YagAddressError
+
+    if not name:
+        name = email
+
+    return email, name
 
 
 def make_addr_alias_target(x, addresses, which):
@@ -74,5 +81,5 @@ def add_message_id(msg, message_id=None, group_messages=True):
             addr = " ".join(sorted([msg["From"], msg["To"]])) + msg.get("Subject", "None")
         else:
             addr = str(time.time() + random.random())
-        message_id = "<" + hashlib.md5(addr.encode()).hexdigest() + "@yagmail>"
+        message_id = "<" + hashlib.md5(addr.encode()).hexdigest() + "@pp>"
     msg["Message-ID"] = message_id
