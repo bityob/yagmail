@@ -1,0 +1,36 @@
+Content-Type: multipart/mixed; boundary="================="
+MIME-Version: 1.0
+Date: Thu, 13 Jan 2022 19:28:36 -0000
+Subject: fake-subject
+From: "John Doe" <username@domain.com>
+To: dest@other.domain.com
+Message-ID: <8aae90ca5c21941924527f916c805189@pp>
+
+--=================
+Content-Type: multipart/alternative; boundary="================="
+MIME-Version: 1.0
+
+--=================
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+SGVsbG8gV29ybGQ=
+
+--=================
+Content-Type: multipart/related; boundary="================="
+MIME-Version: 1.0
+
+--=================
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGhlYWQ+PC9oZWFkPjxib2R5PjxkaXY+SGVsbG8gV29ybGQ8L2Rpdj48L2JvZHk+PC9o
+dG1sPg==
+
+--=================--
+
+--=================--
+
+--=================--

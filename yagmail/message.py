@@ -51,9 +51,18 @@ def prepare_message(
     message_id=None,
     group_messages=True,
     dkim=None,
+    text_only_without_formatting=False,
 ):
-    # check if closed!!!!!! XXX
     """ Prepare a MIME message """
+    if text_only_without_formatting:
+        # Send email content as html without any formatting/attachments, clean and simple
+        assert isinstance(contents, str)
+        msg = MIMEMultipart("alternative")
+        msg.attach(MIMEText(contents, "html"))
+        add_subject(msg, subject)
+        add_recipients_headers(user, useralias, msg, addresses)
+        add_message_id(msg, message_id, group_messages)
+        return msg
 
     if not isinstance(contents, (list, tuple)):
         if contents is not None:
@@ -61,6 +70,7 @@ def prepare_message(
     if not isinstance(attachments, (list, tuple)):
         if attachments is not None:
             attachments = [attachments]
+
     # merge contents and attachments for now.
     if attachments is not None:
         for a in attachments:
@@ -72,14 +82,17 @@ def prepare_message(
         contents = [serialize_object(x) for x in contents]
 
     has_included_images, content_objects = prepare_contents(contents, encoding)
+
     if contents is not None:
         contents = [x[1] for x in contents]
 
     msg = MIMEMultipart()
+
     if headers is not None:
         # Strangely, msg does not have an update method, so then manually.
         for k, v in headers.items():
             msg[k] = v
+
     if headers is None or "Date" not in headers:
         msg["Date"] = formatdate()
 
