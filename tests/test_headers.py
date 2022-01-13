@@ -7,8 +7,8 @@ import pytest
 @pytest.mark.parametrize("user_input, email_output, name_output", [
     ("a@a.com", "a@a.com", "a@a.com"),
     ("A B <a@a.com>", "a@a.com", "A B"),
-    ("C D <aaa.com>", None, None),
-    ("bla-bla", None, None),
+    ("C D <aaa.com>", "aaa.com", "C D"),
+    ("bla-bla", "bla-bla", "bla-bla"),
     ({}, None, None),
     ([], None, None),
 ])

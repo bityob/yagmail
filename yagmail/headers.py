@@ -29,10 +29,6 @@ def make_addr_alias_user(email_addr):
 
     name, email = parseaddr(email_addr)
 
-    # Minimal email verification
-    if not email or "@" not in email_addr:
-        raise YagAddressError
-
     if not name:
         name = email
 

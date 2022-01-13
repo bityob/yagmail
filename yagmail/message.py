@@ -62,6 +62,10 @@ def prepare_message(
         add_subject(msg, subject)
         add_recipients_headers(user, useralias, msg, addresses)
         add_message_id(msg, message_id, group_messages)
+
+        if dkim is not None:
+            add_dkim_sig_to_message(msg, dkim)
+
         return msg
 
     if not isinstance(contents, (list, tuple)):
