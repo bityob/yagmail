@@ -155,9 +155,11 @@ def prepare_message(
                     try:
                         htmlstr += "<div>{0}</div>".format(content_string)
                         if PY3 and prettify_html:
-                            import premailer
-
-                            htmlstr = premailer.transform(htmlstr)
+                            try:
+                                import premailer
+                                htmlstr = premailer.transform(htmlstr)
+                            except ImportError:
+                                pass
                     except UnicodeEncodeError:
                         htmlstr += u"<div>{0}</div>".format(content_string)
                     altstr.append(content_string)
