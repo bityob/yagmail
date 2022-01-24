@@ -5,6 +5,7 @@ def _send_message(**kwargs):
 
 
 def test_sender_verify_line_ending_with_crlf_with_local_smtp_server():
+    from email.message import Message
     from smtpdfix.handlers import AuthMessage
     from smtpdfix import SMTPDFix
 
@@ -21,7 +22,7 @@ def test_sender_verify_line_ending_with_crlf_with_local_smtp_server():
     hostname, port = "127.0.0.1", 8025
 
     with SMTPDFix(hostname, port) as smtpd:
-        _send_message(
+        result, msg_obj = _send_message(
             preview_only=False,
             login_mock=False,
             smtp_skip_login=True,
@@ -30,6 +31,9 @@ def test_sender_verify_line_ending_with_crlf_with_local_smtp_server():
             smtp_ssl=False,
             smtp_starttls=False,
         )
+
+        assert isinstance(result, bool) or result == {}
+        assert isinstance(msg_obj, Message)
 
         assert smtpd.messages
         assert len(smtpd.messages) == 1

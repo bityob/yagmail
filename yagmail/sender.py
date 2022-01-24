@@ -158,7 +158,7 @@ class SMTP:
         message_id=None,
         group_messages=True,
         text_only_without_formatting=False,
-    ) -> Union[bool, Tuple[List[str], Message]]:
+    ) -> Union[Tuple[bool, Message], Tuple[List[str], Message]]:
         """ Use this to send an email with gmail"""
         self.login()
 
@@ -179,7 +179,7 @@ class SMTP:
         if preview_only:
             return recipients, msg
 
-        return self._attempt_send(recipients, msg)
+        return self._attempt_send(recipients, msg), msg
 
     def _attempt_send(self, recipients: List[str], msg: Message) -> bool:
         msg_string = msg.as_string()
