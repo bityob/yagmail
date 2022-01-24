@@ -5,7 +5,7 @@ with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
 
 MAJOR_VERSION = '0'
-MINOR_VERSION = '21'
+MINOR_VERSION = '22'
 MICRO_VERSION = '0'
 VERSION = "{}.{}.{}+pp".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
 
