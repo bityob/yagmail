@@ -1,8 +1,9 @@
 from setuptools import setup
 from setuptools import find_packages
 
-with open('README.rst') as f:
+with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
+
 MAJOR_VERSION = '0'
 MINOR_VERSION = '21'
 MICRO_VERSION = '0'
@@ -17,7 +18,17 @@ setup(
     author='Pascal van Kooten',
     author_email='kootenpv@gmail.com',
     license='MIT',
-    extras_require={"all": ["keyring", "dkimpy", "premailer"], "dkim": ["dkimpy"]},
+    extras_require={
+        "all": ["keyring", "dkimpy", "premailer"],
+        "dkim": ["dkimpy"],
+        "test": [
+            "pytest",
+            "pytest-xdist",
+            "smtpdfix",
+            "pytest-cov",
+            "coveralls",
+        ]
+    },
     install_requires=[],
     keywords='email mime automatic html attachment',
     entry_points={'console_scripts': ['yagmail = yagmail.__main__:main']},

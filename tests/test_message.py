@@ -31,10 +31,10 @@ def test_prepare_message_hello_world_without_formatting():
         text_only_without_formatting=True,
     )
 
-    expected_output = Path("message_hello_world_without_formatting.txt").read_text()
+    expected_output = (Path(__file__).parent / "message_hello_world_without_formatting.txt").read_text()
 
     # Remove random boundary value
-    message_without_random_boundary_value = re.sub("\d{19}", "", str(msg))
+    message_without_random_boundary_value = re.sub(r"\d{19}", "", str(msg))
 
     assert expected_output == message_without_random_boundary_value
 
@@ -65,10 +65,10 @@ def test_prepare_message_hello_world_with_formatting():
         text_only_without_formatting=False,
     )
 
-    expected_output = Path("message_hello_world_with_formatting.txt").read_text()
+    expected_output = (Path(__file__).parent / "message_hello_world_with_formatting.txt").read_text()
 
     # Remove random boundary value
-    message_without_random_boundary_value = re.sub("\d{19}", "", str(msg))
+    message_without_random_boundary_value = re.sub(r"\d{19}", "", str(msg))
 
     assert expected_output == message_without_random_boundary_value
 
@@ -80,7 +80,7 @@ def test_prepare_message_html_file_without_formatting():
         "To": "dest@other.domain.com",
     }
     subject = "fake-subject"
-    contents = Path("example.html").read_text()
+    contents = (Path(__file__).parent / "example.html").read_text()
     attachments = None
     headers = None
     encoding = "utf-8"
@@ -97,10 +97,10 @@ def test_prepare_message_html_file_without_formatting():
         text_only_without_formatting=True,
     )
 
-    expected_output = Path("message_html_file_without_formatting.txt").read_text()
+    expected_output = (Path(__file__).parent / "message_html_file_without_formatting.txt").read_text()
 
     # Remove random boundary value
-    message_without_random_boundary_value = re.sub("\d{19}", "", str(msg))
+    message_without_random_boundary_value = re.sub(r"\d{19}", "", str(msg))
 
     assert expected_output == message_without_random_boundary_value
 
@@ -112,7 +112,7 @@ def test_prepare_message_html_file_with_formatting():
         "To": "dest@other.domain.com",
     }
     subject = "fake-subject"
-    contents = Path("example.html").read_text()
+    contents = (Path(__file__).parent / "example.html").read_text()
     attachments = None
     headers = {
         "Date": "Thu, 13 Jan 2022 19:43:22 -0000",
@@ -133,10 +133,10 @@ def test_prepare_message_html_file_with_formatting():
         prettify_html=False,
     )
 
-    expected_output = Path("message_html_file_with_formatting.txt").read_text()
+    expected_output = (Path(__file__).parent / "message_html_file_with_formatting.txt").read_text()
 
     # Remove random boundary value
-    message_without_random_boundary_value = re.sub("\d{19}", "", str(msg))
+    message_without_random_boundary_value = re.sub(r"\d{19}", "", str(msg))
 
     assert expected_output == message_without_random_boundary_value
 
@@ -148,7 +148,7 @@ def test_prepare_message_html_file_without_formatting_and_dkim():
         "To": "dest@other.domain.com",
     }
     subject = "fake-subject"
-    contents = Path("example.html").read_text()
+    contents = (Path(__file__).parent / "example.html").read_text()
     attachments = None
     headers = None
     encoding = "utf-8"
@@ -179,12 +179,12 @@ def test_prepare_message_html_file_without_formatting_and_dkim():
         dkim=dkim_obj,
     )
 
-    expected_output = Path("message_html_file_without_formatting_and_dkim.txt").read_text()
+    expected_output = (Path(__file__).parent / "message_html_file_without_formatting_and_dkim.txt").read_text()
 
     # Remove random boundary value
-    msg_without_random_data = re.sub("\d{19}", "", str(msg))
+    msg_without_random_data = re.sub(r"\d{19}", "", str(msg))
 
-    msg_without_random_data = re.sub("t=\d{10}", "t=1642107621", msg_without_random_data)
+    msg_without_random_data = re.sub(r"t=\d{10}", "t=1642107621", msg_without_random_data)
 
     pattern = re.compile("bh=.*?--=================", re.MULTILINE | re.DOTALL)
 
@@ -194,7 +194,7 @@ def test_prepare_message_html_file_without_formatting_and_dkim():
 
     msg_string = str(msg)
 
-    from test_dkim import get_txt_from_test_file
+    from tests.test_dkim import get_txt_from_test_file
 
     assert dkim.verify(
         message=msg_string.encode("utf8"),

@@ -1,16 +1,22 @@
 """ Testing module for yagmail """
 import itertools
+
+import pytest
+
 from yagmail import SMTP
-from yagmail import raw, inline
+from yagmail import raw
+
+user_name = "a@a.com"
 
 
-def get_combinations(yag):
+def get_combinations():
     """ Creates permutations of possible inputs """
     tos = (
         None,
-        (yag.user),
-        [yag.user, yag.user],
-        {yag.user: '"me" <{}>'.format(yag.user), yag.user + '1': '"me" <{}>'.format(yag.user)},
+        (user_name),
+        [user_name, user_name],
+        {user_name: '"me" <{}>'.format(user_name),
+         user_name + '1': '"me" <{}>'.format(user_name)},
     )
     subjects = ('subj', ['subj'], ['subj', 'subj1'])
     contents = (
@@ -29,9 +35,17 @@ def get_combinations(yag):
     return results
 
 
-def test_one():
-    """ Tests several versions of allowed input for yagmail """
-    yag = SMTP(smtp_skip_login=True, soft_email_validation=False)
-    mail_combinations = get_combinations(yag)
-    for combination in mail_combinations:
-        print(yag.send(**combination))
+@pytest.mark.parametrize("combination", get_combinations())
+def test_send(combination, smtpd):
+    yag = SMTP(
+        host=smtpd.hostname,
+        port=smtpd.port,
+        smtp_skip_login=True,
+        soft_email_validation=False,
+        smtp_ssl=False,
+        smtp_starttls=False,
+    )
+
+    print(yag.send(
+        **combination
+    ))

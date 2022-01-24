@@ -3,7 +3,10 @@ import logging
 from pathlib import Path
 from unittest.mock import Mock
 
-import dkim
+import dkim as dkimpy
+
+
+to = "b@b.com"
 
 
 def get_txt_from_test_file(*args, **kwargs):
@@ -12,12 +15,18 @@ def get_txt_from_test_file(*args, **kwargs):
     return Path(dns_data_file).read_bytes()
 
 
-def test_email_with_dkim():
+def _send_msg_with_dkim(preview_only: bool,
+                        login_mock: bool = True,
+                        smtp_skip_login: bool = False,
+                        host: str = "smtp.blabla.com",
+                        port: int = 25,
+                        smtp_ssl: bool = False,
+                        smtp_starttls: bool = True,
+                        ):
     from yagmail import SMTP
     from yagmail.dkim import DKIM
 
     private_key_path = Path(__file__).parent / "privkey.pem"
-
     private_key = private_key_path.read_bytes()
 
     dkim_obj = DKIM(
@@ -26,28 +35,36 @@ def test_email_with_dkim():
         private_key=private_key,
         include_headers=[b"To", b"From", b"Subject"]
     )
+
     yag = SMTP(
         user="a@a.com",
-        host="smtp.blabla.com",
-        port=25,
+        host=host,
+        port=port,
         dkim=dkim_obj,
+        smtp_skip_login=smtp_skip_login,
+        smtp_ssl=smtp_ssl,
+        smtp_starttls=smtp_starttls,
     )
 
-    yag.login = Mock()
+    if login_mock:
+        yag.login = Mock()
 
-    to = "b@b.com"
-
-    recipients, msg_bytes = yag.send(
+    return yag.send(
         to=to,
         subject="hello from tests",
         contents="important message",
-        preview_only=True
+        preview_only=preview_only,
     )
 
-    msg_string = msg_bytes.decode("utf8")
+
+def test_msg_with_dkim():
+    recipients, msg = _send_msg_with_dkim(preview_only=True, login_mock=True, smtp_skip_login=False)
+
+    msg_string = msg.as_string()
 
     assert recipients == [to]
     assert "Subject: hello from tests" in msg_string
+
     text_b64 = base64.b64encode(b"important message").decode("utf8")
     assert text_b64 in msg_string
 
@@ -62,8 +79,8 @@ def test_email_with_dkim():
     l.setLevel(level=logging.DEBUG)
     logging.basicConfig(level=logging.DEBUG)
 
-    assert dkim.verify(
-        message=msg_string.encode("utf8"),
+    assert dkimpy.verify(
+        message=msg.as_bytes(),
         logger=l,
         dnsfunc=get_txt_from_test_file
     )

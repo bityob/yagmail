@@ -4,6 +4,9 @@
 import time
 import logging
 import smtplib
+from typing import List, Tuple, Union
+
+from email.message import Message
 
 from yagmail.log import get_logger
 from yagmail.utils import find_user_home_path
@@ -27,7 +30,7 @@ class SMTP:
         port=None,
         smtp_starttls=None,
         smtp_ssl=True,
-        smtp_set_debuglevel=0,
+        smtp_set_debuglevel=2,
         smtp_skip_login=False,
         encoding="utf-8",
         oauth2_file=None,
@@ -64,6 +67,7 @@ class SMTP:
         self.oauth2_file = oauth2_file
         self.credentials = password if oauth2_file is None else oauth2_info
         self.dkim = dkim
+        self.smtp = None
 
     def __enter__(self):
         return self
@@ -113,7 +117,7 @@ class SMTP:
         message_id=None,
         group_messages=True,
         text_only_without_formatting=False,
-    ):
+    ) -> Tuple[List[str], Message]:
         addresses = resolve_addresses(self.user, self.useralias, to, cc, bcc)
 
         if self.soft_email_validation:
@@ -137,8 +141,8 @@ class SMTP:
         )
 
         recipients = addresses["recipients"]
-        msg_bytes = msg.as_bytes()
-        return recipients, msg_bytes
+
+        return recipients, msg
 
     def send(
         self,
@@ -154,10 +158,11 @@ class SMTP:
         message_id=None,
         group_messages=True,
         text_only_without_formatting=False,
-    ):
+    ) -> Union[bool, Tuple[List[str], Message]]:
         """ Use this to send an email with gmail"""
         self.login()
-        recipients, msg_bytes = self.prepare_send(
+
+        recipients, msg = self.prepare_send(
             to,
             subject,
             contents,
@@ -170,16 +175,18 @@ class SMTP:
             group_messages,
             text_only_without_formatting,
         )
+
         if preview_only:
-            return recipients, msg_bytes
+            return recipients, msg
 
-        return self._attempt_send(recipients, msg_bytes)
+        return self._attempt_send(recipients, msg)
 
-    def _attempt_send(self, recipients, msg_bytes):
+    def _attempt_send(self, recipients: List[str], msg: Message) -> bool:
+        msg_string = msg.as_string()
         attempts = 0
         while attempts < 3:
             try:
-                result = self.smtp.sendmail(self.user, recipients, msg_bytes)
+                result = self.smtp.sendmail(self.user, recipients, msg_string)
                 self.log.info("Message sent to %s", recipients)
                 self.num_mail_sent += 1
                 return result
